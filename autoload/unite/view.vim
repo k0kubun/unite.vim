@@ -695,6 +695,9 @@ function! unite#view#_set_cursor_line() abort "{{{
 
   if line('.') != prompt_linenr
     call unite#view#_match_line(context.cursor_line_highlight, line('.'))
+  else
+    call unite#view#_match_line(context.cursor_line_highlight,
+          \ prompt_linenr+(context.prompt_direction ==# 'below' ? -1 : 1))
   endif
   let unite.cursor_line_time = reltime()
 endfunction"}}}
@@ -828,7 +831,7 @@ endfunction"}}}
 function! unite#view#_match_line(highlight, line) abort "{{{
   call unite#view#_clear_match()
 
-  if &filetype ==# 'unite'
+  if 0
     setlocal cursorline
     return
   endif
@@ -1010,10 +1013,8 @@ function! unite#view#_convert_lines(candidates) abort "{{{
         \ . (unite.max_source_name == 0 ? ''
         \   : unite#util#truncate(unite#helper#convert_source_name(
         \     (v:val.is_dummy ? '' : v:val.source)), max_source_name))
-        \ . ((strwidth(v:val.unite__abbr) < max_width || !context.truncate) ?
-        \     v:val.unite__abbr
-        \   : unite#util#truncate_wrap(v:val.unite__abbr, max_width
-        \    , truncate_width, '..'))")
+        \ . unite#util#truncate_wrap(v:val.unite__abbr, " . max_width
+        \    .  ", (context.truncate ? 0 : max_width/2), '..')")
 endfunction"}}}
 " @vimlint(EVL102, 0, l:max_source_name)
 " @vimlint(EVL102, 0, l:context)
